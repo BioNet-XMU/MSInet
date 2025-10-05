@@ -21,7 +21,7 @@ def superpixels(in_image, h, w , c):
     segments_slic_shape = segments_slic.reshape(-1)
     print(segments_slic_shape.shape, 'sp-shape')
     #np.save('sp_umap_tumort_up.npy', segments_slic_shape)
-    print(f'SLIC number of segments: {len(np.unique(segments_slic))}')
+    print(f'superpixel number of segments: {len(np.unique(segments_slic))}')
     plt.imshow(segments_slic.reshape(h, w).astype(np.uint8))
     plt.show()
 
@@ -96,3 +96,4 @@ def visualize_patches(tensor, window_size):
         plt.axis('off')
     plt.tight_layout()
     plt.show()
+
