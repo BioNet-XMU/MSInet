@@ -7,6 +7,8 @@ from config import args
 from patch_loss import contrastive_patch_loss
 from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
+from google.colab.patches import cv2_imshow
+
 
 def train_model(model, data, im, labels, data_name):
     loss_fn = torch.nn.CrossEntropyLoss()
@@ -91,4 +93,5 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
