@@ -19,7 +19,7 @@ def main():
     data_name = 'simulated_'
     load_image = norm_array(load_image)
     #load_image = reduce_dimensions_umap(load_image, n_components=3)
-    im = load_image.reshape(70, 70, 3)
+    im = load_image.reshape(args.in_shape_y, args.in_shape_y, 3)
 
     print(f"Min value in normalized array: {im.min()}")
     print(f"Max value in normalized array: {im.max()}")
@@ -48,3 +48,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
