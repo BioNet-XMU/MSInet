@@ -26,14 +26,14 @@ def train_model(model, data, im, labels, data_name):
 
         optimizer.zero_grad()
         output1 = model(data_batch)[0]
-        print(output1.shape, 'shape of model output')
+        #print(output1.shape, 'shape of model output')
         output = output1.permute(1, 2, 0).contiguous().view(-1, args.outClust)
-        print(output.shape, 'after reshape output')
+        #print(output.shape, 'after reshape output')
         clusify = torch.argmax(output, dim=1)
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
-        if args.visualize and epoch % 20 == 0:
+        if args.visualize and epoch % 10 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
     
@@ -65,7 +65,7 @@ def train_model(model, data, im, labels, data_name):
         lhpy = loss_hpy(HPy, HPy_target)
         lhpz = loss_hpz(HPz, HPz_target)
         
-        loss = loss_fn(output, rf_target)*0.5 + patch_sim*4 + (lhpy+lhpz)*4
+        loss = loss_fn(output, rf_target)*0.5 + patch_sim*4 + (lhpy+lhpz)*2
         loss.backward()
         optimizer.step()
 
@@ -93,5 +93,6 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
 
