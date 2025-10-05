@@ -31,27 +31,48 @@ def train_model(model, data, im, labels, data_name):
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
-        if args.visualize:
+        if args.visualize and epoch % 20 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
+    
+            # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
-            cv2.imshow("output", seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-            cv2.waitKey(50)
-            patch_sim = contrastive_patch_loss(output1, 5)
-            rf_target = superpixel_refinement_1(seg_map, labels)
-            if use_cuda:
-                rf_target = rf_target.cuda()
-            loss = loss_fn(output, rf_target)*0.5 + patch_sim*4
-            loss.backward()
-            optimizer.step()
+    
+            cv2_imshow(seg_rgb)
+            #plt.title(f"Segmentation Output - Epoch {epoch}")
+            #plt.axis('off')  # Hide axes for better visualization
+            plt.show()
+        patch_sim = contrastive_patch_loss(output1, 5)
+        rf_target = superpixel_refinement_1(seg_map, labels)
+        if use_cuda:
+            rf_target = rf_target.cuda()
+            
+        loss_hpy = torch.nn.L1Loss(reduction='mean')  
+        loss_hpz = torch.nn.L1Loss(reduction='mean') 
+        HPy_target = torch.zeros(args.in_shape_y - 1, args.in_shape_x, args.inChannel)
+        HPz_target = torch.zeros(args.in_shape_y, args.in_shape_x - 1, args.inChannel)
+        
+        if use_cuda:
+            HPy_target = HPy_target.cuda()
+            HPz_target = HPz_target.cuda()
+            
+        outputHP = output.reshape((args.in_shape_y, args.in_shape_x, args.inChannel))
+        HPy = outputHP[1:, :, :] - outputHP[0:-1, :, :]
+        HPz = outputHP[:, 1:, :] - outputHP[:, 0:-1, :]
+        lhpy = loss_hpy(HPy, HPy_target)
+        lhpz = loss_hpz(HPz, HPz_target)
+        
+        loss = loss_fn(output, rf_target)*0.5 + patch_sim*4 + (lhpy+lhpz)*4
+        loss.backward()
+        optimizer.step()
 
-            loss_value = loss.item()
-            loss_values.append(loss_value)
-            print(epoch, '/', len(data), ':', nLabels, loss.item())
-            if nLabels <= args.minLabels:
-                print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
-                break
+        loss_value = loss.item()
+        loss_values.append(loss_value)
+        print(epoch, '/', len(data), ':', nLabels, loss.item())
+        if nLabels <= args.minLabels:
+            print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
+            break
     # Plot loss
     plt.plot(loss_values)
     plt.xlabel('Epochs')
@@ -70,3 +91,4 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
