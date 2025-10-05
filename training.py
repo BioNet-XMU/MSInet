@@ -33,7 +33,7 @@ def train_model(model, data, im, labels, data_name):
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
-        if args.visualize and epoch % 10 == 0:
+        if args.visualize #and epoch % 10 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
     
@@ -65,7 +65,7 @@ def train_model(model, data, im, labels, data_name):
         lhpy = loss_hpy(HPy, HPy_target)
         lhpz = loss_hpz(HPz, HPz_target)
         
-        loss = loss_fn(output, rf_target)*0.5 + patch_sim*4 + (lhpy+lhpz)*2
+        loss = loss_fn(output, rf_target)*0.5 + patch_sim*2 + (lhpy+lhpz)*2
         loss.backward()
         optimizer.step()
 
@@ -93,6 +93,7 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
 
 
