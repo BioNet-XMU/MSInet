@@ -76,11 +76,11 @@ def train_model(model, data, im, labels, data_name):
             print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
             break
     # Plot loss
-    plt.plot(loss_values)
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.savefig(f'output/MSInet_seg_{data_name}_loss.png')
-    plt.show()
+    #plt.plot(loss_values)
+    #plt.xlabel('Epochs')
+    #plt.ylabel('Loss')
+    #plt.savefig(f'output/MSInet_seg_{data_name}_loss.png')
+    #plt.show()
     # Save output
     if args.visualize:
         output = model(data)[0]
@@ -93,6 +93,7 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
 
 
