@@ -27,7 +27,7 @@ def contrastive_patch_loss(tensor, window_size, weight_sim=1, threshold=0.55, ba
     C, H, W = tensor.shape
     padding = window_size // 2
     tensor = tensor.unsqueeze(0)
-    unfold = nn.Unfold(kernel_size=window_size, stride=4, padding=padding)
+    unfold = nn.Unfold(kernel_size=window_size, stride=2, padding=padding)
     """
     Lower stride --- more overlapping patches, captures finer local details and provides richer contrastive 
     pairs but slower and memory-heavy.
@@ -54,3 +54,4 @@ def contrastive_patch_loss(tensor, window_size, weight_sim=1, threshold=0.55, ba
     total_loss = positive_loss + negative_loss
 
     return total_loss
+
