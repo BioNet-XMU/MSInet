@@ -9,13 +9,25 @@ from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
 
 
-
 def train_model(model, data, im, labels, data_name):
+
+    height = im.shape[0]
+    width = im.shape[1]
+    
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
     label_colours = np.random.randint(255, size=(100, 3))
     num_epochs = args.maxIter
     loss_values = []
+
+    loss_hpy = torch.nn.L1Loss(reduction='mean')  
+    loss_hpz = torch.nn.L1Loss(reduction='mean') 
+    HPy_target = torch.zeros(height - 1, width, args.inChannel)
+    HPz_target = torch.zeros(width, height - 1, args.inChannel)
+        
+    if use_cuda:
+        HPy_target = HPy_target.cuda()
+        HPz_target = HPz_target.cuda()
 
     for epoch in range(num_epochs):
         print(f"Epoch {epoch + 1}/{num_epochs}")
@@ -33,6 +45,12 @@ def train_model(model, data, im, labels, data_name):
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
+        outputHP = output.reshape((height, width, args.inChannel))
+        HPy = outputHP[1:, :, :] - outputHP[0:-1, :, :]
+        HPz = outputHP[:, 1:, :] - outputHP[:, 0:-1, :]
+        lhpy = loss_hpy(HPy, HPy_target)
+        lhpz = loss_hpz(HPz, HPz_target)
+
         if args.visualize: #and epoch % 10 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
@@ -40,7 +58,6 @@ def train_model(model, data, im, labels, data_name):
             # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-
             #from google.colab.patches import cv2_imshow #uncomment it if running on colab
             #cv2_imshow(seg_rgb) #uncomment it if running on colab
             cv2.imshow(seg_rgb)
@@ -49,21 +66,6 @@ def train_model(model, data, im, labels, data_name):
         rf_target = superpixel_refinement_1(seg_map, labels)
         if use_cuda:
             rf_target = rf_target.cuda()
-            
-        loss_hpy = torch.nn.L1Loss(reduction='mean')  
-        loss_hpz = torch.nn.L1Loss(reduction='mean') 
-        HPy_target = torch.zeros(args.in_shape_y - 1, args.in_shape_x, args.inChannel)
-        HPz_target = torch.zeros(args.in_shape_y, args.in_shape_x - 1, args.inChannel)
-        
-        if use_cuda:
-            HPy_target = HPy_target.cuda()
-            HPz_target = HPz_target.cuda()
-            
-        outputHP = output.reshape((args.in_shape_y, args.in_shape_x, args.inChannel))
-        HPy = outputHP[1:, :, :] - outputHP[0:-1, :, :]
-        HPz = outputHP[:, 1:, :] - outputHP[:, 0:-1, :]
-        lhpy = loss_hpy(HPy, HPy_target)
-        lhpz = loss_hpz(HPz, HPz_target)
         
         loss = loss_fn(output, rf_target)*0.5 + patch_sim*2 + (lhpy+lhpz)*2
         loss.backward()
@@ -81,6 +83,7 @@ def train_model(model, data, im, labels, data_name):
     #plt.ylabel('Loss')
     #plt.savefig(f'output/MSInet_seg_{data_name}_loss.png')
     #plt.show()
+    
     # Save output
     if args.visualize:
         output = model(data)[0]
@@ -93,6 +96,7 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
 
 
