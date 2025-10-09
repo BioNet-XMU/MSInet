@@ -58,9 +58,9 @@ def train_model(model, data, im, labels, data_name):
             # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-            #from google.colab.patches import cv2_imshow #uncomment it if running on colab
-            #cv2_imshow(seg_rgb) #uncomment it if running on colab
-            cv2.imshow(seg_rgb)
+            from google.colab.patches import cv2_imshow #uncomment it if running on colab
+            cv2_imshow(seg_rgb) #uncomment it if running on colab
+            #cv2.imshow(seg_rgb)
             plt.show()
         patch_sim = contrastive_patch_loss(output1, 5)
         rf_target = superpixel_refinement_1(seg_map, labels)
@@ -96,6 +96,7 @@ def train_model(model, data, im, labels, data_name):
         np.savetxt(f"output/MSInet{data_name}_", seg_map)
         np.save(f"output/MSInet{data_name}_.npy", seg_map_out)
         print("Final output saved.")
+
 
 
 
