@@ -7,5 +7,7 @@ MSInet: A framework designed for unsupervised segmentation in Mass Spectrometry 
 Clone this repository and install all dependencies:
 
 git clone https://github.com/BioNet-XMU/MSInet.git
+
 cd MSInet
+
 pip install -r requirements.txt
