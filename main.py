@@ -15,9 +15,17 @@ def main():
     # === Step 1: Path to the data
     data_path = input("Enter path to your .npy data file: ").strip()
     load_image = np.load(data_path)
-    print(load_image.shape, 'showing the shape of input')
+    print(f"Loaded data shape: {load_image.shape}")
+
+    # === Step 2: Apply UMAP
+    if load_image.ndim != 3:
+        print("Data is not 3D — applying UMAP to reduce to 3D space...")
+        load_image = reduce_dimensions_umap(load_image)
+        print(f"UMAP reduced shape: {load_image.shape}")
+    else:
+        print("Data already has 3 dimensions, skip UMAP.")
     
-    # === Step 2: insert data shape
+    # === Step 3: insert data shape
     shape_input = input("Enter image shape (height width channels): ").strip()
     shape = tuple(int(x) for x in shape_input.split())
     if len(shape) != 3:
@@ -36,7 +44,7 @@ def main():
         data = data.cuda()
     data = Variable(data)
     
-    # ===Step 2: Generate superpixels
+    # ===Step 4: Generate superpixels
     sp_map = superpixels(load_image, *im.shape)
     sp_indices_map = create_superpixel_indices(sp_map)
     labels = [np.array(indices) for indices in sp_indices_map.values()]
@@ -52,6 +60,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
