@@ -18,12 +18,14 @@ def main():
     print(f"Loaded data shape: {load_image.shape}")
 
     # === Step 2: Apply UMAP
-    if load_image.ndim != 3:
-        print("Data is not 3D — applying UMAP to reduce to 3D space...")
+    n_features = load_image.shape[1]
+    print(f"Number of features: {n_features}")
+    if n_features > 3:
+        print("Data has more than 3 features — applying UMAP to reduce ...")
         load_image = reduce_dimensions_umap(load_image)
         print(f"UMAP reduced shape: {load_image.shape}")
     else:
-        print("Data already has 3 dimensions, skip UMAP.")
+        print("Data already has 3 features, skip UMAP.")
     
     # === Step 3: insert data shape
     shape_input = input("Enter image shape (height width channels): ").strip()
@@ -60,6 +62,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
