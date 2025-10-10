@@ -15,6 +15,7 @@ def main():
     # === Step 1: Path to the data
     data_path = input("Enter path to your .npy data file: ").strip()
     load_image = np.load(data_path)
+    print(load_image.shape, 'showing the shape of input')
     
     # === Step 2: insert data shape
     shape_input = input("Enter image shape (height width channels): ").strip()
@@ -51,6 +52,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
