@@ -17,10 +17,9 @@ python main.py
 
 ## You’ll be interactively asked to provide: 
 Enter path to your .npy data file: 
+
 Enter image shape (height width channels): 
 
-from google.colab import drive
-drive.mount('/content/drive')
 
 ## Running in Google Colab
 
