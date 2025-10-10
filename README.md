@@ -23,10 +23,8 @@ from google.colab import drive
 drive.mount('/content/drive')
 
 ## Running in Google Colab
-!git clone https://github.com/<your-username>/MSInet.git
+!git clone https://github.com/BioNet-XMU/MSInet.git
 %cd MSInet
 !pip install -r requirements.txt
 %run main.py
-Enter path to your .npy data file: 
-Enter image shape (height width channels): 
 
