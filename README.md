@@ -29,7 +29,7 @@ Run MSInet locally on your computer:
    
    Enter image shape (height width channels):
 
-   The path to the default data is "datasets/simulated.py" and image shape is "70 70 3"
+   The path to the default data is "datasets/simulated.npy" and image shape is "70 70 3"
 
 ## (B) Running on Google Colab
 
@@ -46,6 +46,6 @@ Run MSInet locally on your computer:
    
    Enter image shape (height width channels):
 
-   The path to the default sample data is "/content/MSInet/datasets/simulated.py" and image shape is "70 70 3"
+   The path to the default sample data is "/content/MSInet/datasets/simulated.npy" and image shape is "70 70 3"
 
 
