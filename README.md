@@ -4,30 +4,48 @@
 
 ## Installation
 
-Clone this repository and install all dependencies:
+## (A) Running on Local Machine (Command Line Interface)
 
-git clone https://github.com/BioNet-XMU/MSInet.git
+Run MSInet locally on your computer:
 
-cd MSInet
+1. Clone this repository and install all dependencies:
 
-pip install -r requirements.txt
+   git clone https://github.com/BioNet-XMU/MSInet.git
 
-## After installation, run:
-python main.py
+2. Navigate to the folder
 
-## You’ll be interactively asked to provide: 
-Enter path to your .npy data file: 
+   cd MSInet
+   
+3. Install all dependencies
 
-Enter image shape (height width channels): 
+   pip install -r requirements.txt
 
+4. After installation, run:
 
-## Running in Google Colab
+   python main.py
 
-!git clone https://github.com/BioNet-XMU/MSInet.git
+5. You’ll be interactively asked to provide: 
+   Enter path to your .npy data file:
+   
+   Enter image shape (height width channels):
 
-%cd MSInet
+   The path to the default data is "datasets/simulated.py" and image shape is "70 70 3"
 
-!pip install -r requirements.txt
+## (B) Running on Google Colab
 
-%run main.py
+1. !git clone https://github.com/BioNet-XMU/MSInet.git
+
+2. %cd MSInet
+
+3. !pip install -r requirements.txt
+
+4. %run main.py
+
+5. You’ll be interactively asked to provide: 
+   Enter path to your .npy data file:
+   
+   Enter image shape (height width channels):
+
+   The path to the default sample data is "/content/MSInet/datasets/simulated.py" and image shape is "70 70 3"
+
 
